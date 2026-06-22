@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  .pn *{box-sizing:border-box}
+  @keyframes pnPop{from{opacity:.4;transform:translateY(-3px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div class="pn" style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#1B2A2C">
+  <div style="max-width:{{ maxW }};margin:0 auto;padding:{{ pad }};display:flex;flex-direction:column;gap:14px">
+
+    <!-- ===== SLOT 1 · tytuł + placówka ===== -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+          <sc-if value="{{ hasKicker }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;font-weight:700;color:#0B6F6B;text-transform:uppercase;letter-spacing:.07em">{{ kicker }}</span></sc-if>
+          <sc-for list="{{ badges }}" as="b" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:{{ b.fg }};background:{{ b.bg }};padding:2px 8px;border-radius:5px;white-space:nowrap"><sc-if value="{{ b.hasDot }}" hint-placeholder-val="{{ false }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ b.fg }}"></span></sc-if>{{ b.label }}</span></sc-for>
+        </div>
+        <sc-if value="{{ hasTitle }}" hint-placeholder-val="{{ true }}"><h1 style="font-size:{{ titleSize }};font-weight:800;letter-spacing:-.02em;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ title }}</h1></sc-if>
+        <sc-if value="{{ hasSubtitle }}" hint-placeholder-val="{{ false }}"><p style="font-size:14px;color:#6C8284;margin:7px 0 0;max-width:640px;line-height:1.45">{{ subtitle }}</p></sc-if>
+        <sc-if value="{{ hasMeta }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#8A9C9D;margin-top:4px">{{ meta }}</div></sc-if>
+      </div>
+      <sc-if value="{{ hasLoc }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;flex-shrink:0">
+          <button onClick="{{ loc.onToggle }}" style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:11px;border:1px solid #D4E0E0;background:#fff;font-family:inherit;font-size:13.5px;font-weight:700;color:#26403F;cursor:pointer;min-width:210px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="color:#0E8F8A;flex-shrink:0"><path d="M12 21s-7-5.3-7-11a7 7 0 1 1 14 0c0 5.7-7 11-7 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg><span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ loc.label }}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="color:#9AABAC;flex-shrink:0"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <sc-if value="{{ loc.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:calc(100% + 6px);right:0;z-index:30;width:290px;background:#fff;border:1px solid #E2E9E9;border-radius:13px;box-shadow:0 18px 40px rgba(20,50,48,.18);overflow:hidden">
+              <div style="padding:10px"><input onChange="{{ loc.onSearch }}" placeholder="Szukaj miasta…" style="width:100%;border:1px solid #E2E9E9;border-radius:9px;padding:9px 11px;font-family:inherit;font-size:13px;box-sizing:border-box" /></div>
+              <div style="max-height:264px;overflow:auto;padding:0 6px 8px;display:flex;flex-direction:column;gap:2px">
+                <sc-for list="{{ loc.options }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.onPick }}" style="width:100%;text-align:left;padding:10px 11px;border-radius:8px;border:none;background:{{ o.bg }};color:{{ o.fg }};font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">{{ o.name }}</button></sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- ===== SLOT 2 · kafelki-liczniki ===== -->
+    <sc-if value="{{ hasTiles }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.onClick }}" style="flex:1;min-width:120px;text-align:left;background:{{ t.bg }};border:1px solid {{ t.bd }};border-radius:13px;padding:13px 16px;cursor:{{ t.cursor }};font-family:inherit"><div style="font-size:24px;font-weight:800;color:{{ t.nfg }};line-height:1">{{ t.n }}</div><div style="font-size:12.5px;color:{{ t.labelFg }};font-weight:600;margin-top:3px">{{ t.label }}</div></button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ===== SLOT 3 · pasek dat ===== -->
+    <sc-if value="{{ hasDate }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ date.onPrev }}" style="width:32px;height:32px;border-radius:9px;border:1px solid #D4E0E0;background:#fff;cursor:pointer;color:#54706F;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div style="position:relative">
+          <button onClick="{{ date.onToggle }}" style="font-size:13.5px;font-weight:800;color:#26403F;min-width:140px;text-align:center;border:none;background:none;cursor:pointer;font-family:inherit;padding:6px 8px;border-radius:8px" style-hover="background:#F0F4F4">{{ date.label }}</button>
+          <sc-if value="{{ hasDatePicker }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ date.open }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:35;width:268px;background:#fff;border:1px solid #E2E9E9;border-radius:13px;box-shadow:0 18px 40px rgba(20,50,48,.18);padding:13px">
+                <div style="font-size:13px;font-weight:800;color:#26403F;text-align:center;margin-bottom:9px">{{ datePicker.label }}</div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px"><sc-for list="{{ datePicker.dows }}" as="d" hint-placeholder-count="7"><div style="text-align:center;font-size:9.5px;font-weight:700;color:#9AABAC;padding:2px 0">{{ d }}</div></sc-for></div>
+                <sc-for list="{{ datePicker.weeks }}" as="wk" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
+                    <sc-for list="{{ wk }}" as="c" hint-placeholder-count="7">
+                      <sc-if value="{{ c }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ c.onPick }}" style="position:relative;aspect-ratio:1;border:none;border-radius:7px;background:{{ c.bg }};color:{{ c.fg }};font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">{{ c.d }}<sc-if value="{{ c.has }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:{{ c.dotBg }}"></span></sc-if></button>
+                      </sc-if>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+        </div>
+        <button onClick="{{ date.onNext }}" style="width:32px;height:32px;border-radius:9px;border:1px solid #D4E0E0;background:#fff;cursor:pointer;color:#54706F;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button onClick="{{ date.onToday }}" style="padding:7px 12px;border-radius:9px;border:1px solid #D4E0E0;background:#fff;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;color:#0B6F6B;flex-shrink:0">Dziś</button>
+        <sc-if value="{{ hasModes }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:2px;padding:2px;border-radius:9px;background:#EFF3F3;border:1px solid #E2E9E9;margin-left:2px">
+            <sc-for list="{{ dateModes }}" as="m" hint-placeholder-count="3"><button onClick="{{ m.onClick }}" style="padding:5px 10px;border-radius:7px;border:none;background:{{ m.bg }};color:{{ m.fg }};font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">{{ m.label }}</button></sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ===== SLOT 4 · chipy / zakładki filtrów ===== -->
+    <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="2">
+          <sc-if value="{{ f.isChips }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <sc-if value="{{ f.hasLabel }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#9AABAC;text-transform:uppercase;letter-spacing:.05em">{{ f.label }}</span></sc-if>
+              <sc-for list="{{ f.items }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" title="{{ c.title }}" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap">{{ c.label }}<sc-if value="{{ c.hasN }}" hint-placeholder-val="{{ false }}"><span style="opacity:.7">{{ c.n }}</span></sc-if></button></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+            <select value="{{ f.value }}" onChange="{{ f.onChange }}" style="font-family:inherit;font-size:12.5px;font-weight:700;color:#46605F;border:1px solid #D4E0E0;border-radius:999px;padding:8px 13px;background:#fff;cursor:pointer"><sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select>
+          </sc-if>
+          <sc-if value="{{ f.isToggle }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid {{ f.boxBd }};background:#fff;font-family:inherit;font-size:12.5px;font-weight:700;color:{{ f.fg }};cursor:pointer"><span style="width:18px;height:18px;border-radius:5px;border:2px solid {{ f.boxBd }};background:{{ f.boxBg }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">{{ f.tick }}</span>{{ f.label }}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ===== SLOT 5 · szukaj + sortuj ===== -->
+    <sc-if value="{{ hasSlot5 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <sc-if value="{{ hasSearch }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1px solid #D4E0E0;border-radius:10px;padding:8px 12px;background:#fff">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="color:#9AABAC;flex-shrink:0"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m21 21-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input value="{{ search.value }}" onChange="{{ search.onChange }}" placeholder="{{ search.placeholder }}" style="flex:1;min-width:0;border:none;outline:none;font-family:inherit;font-size:13px;color:#26403F;background:none" />
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasSort }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:7px;flex-shrink:0"><span style="font-size:12px;color:#9AABAC;font-weight:600">Sortuj</span>
+            <select value="{{ sort.value }}" onChange="{{ sort.onChange }}" style="font-family:inherit;font-size:12.5px;font-weight:700;color:#46605F;border:1px solid #D4E0E0;border-radius:10px;padding:8px 11px;background:#fff;cursor:pointer"><sc-for list="{{ sort.options }}" as="o" hint-placeholder-count="3"><option value="{{ o.k }}">{{ o.label }}</option></sc-for></select>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:260},&quot;cfg&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;any&quot;}}">
+class Component extends DCLogic {
+  renderVals(){
+    const c = this.props.cfg || {};
+    const loc = c.loc || null;
+    const tiles = (c.tiles || []).map(t=>({
+      n: t.n, label: t.label,
+      nfg: t.nfg || t.fg || '#0E8F8A',
+      labelFg: t.labelFg || '#8A9C9D',
+      bg: t.bg || '#fff',
+      bd: t.bd || '#E2E9E9',
+      cursor: t.onClick ? 'pointer' : 'default',
+      onClick: t.onClick || (()=>{}),
+    }));
+    const date = c.date ? {
+      label: c.date.label || '',
+      open: !!c.date.open,
+      onPrev: c.date.onPrev || (()=>{}),
+      onNext: c.date.onNext || (()=>{}),
+      onToday: c.date.onToday || (()=>{}),
+      onToggle: c.date.onToggle || (()=>{}),
+    } : null;
+    const datePicker = (c.date && c.date.picker) ? c.date.picker : null;
+    const dateModes = (c.date && c.date.modes) ? c.date.modes : [];
+    const filters = (c.filters || []).map(f=>({
+      isChips: f.kind==='chips',
+      isSelect: f.kind==='select',
+      isToggle: f.kind==='toggle',
+      hasLabel: !!f.label, label: f.label || '',
+      items: (f.items || []).map(it=>({ ...it, hasN: it.n!=null && it.n!=='', title: it.title || '' })),
+      value: f.value, onChange: f.onChange || (()=>{}),
+      options: f.options || [],
+      fg: f.fg || '#54706F', boxBd: f.boxBd || '#C7D3D3', boxBg: f.boxBg || '#fff', tick: f.tick || '', onClick: f.onClick || (()=>{}),
+    }));
+    const search = c.search || null;
+    const sort = c.sort || null;
+    return {
+      maxW: c.maxW || '1000px',
+      pad: c.pad || '28px 28px 16px',
+      titleSize: c.titleSize || '28px',
+      kicker: c.kicker || '', hasKicker: !!c.kicker,
+      title: c.title || '', hasTitle: !!c.title,
+      subtitle: c.subtitle || '', hasSubtitle: !!c.subtitle,
+      meta: c.meta || '', hasMeta: !!c.meta,
+      badges: (c.badges || []).map(b=>({ label:b.label, bg:b.bg||'#EEF2F2', fg:b.fg||'#5B53C9', hasDot: b.dot!==false })),
+      loc, hasLoc: !!loc,
+      tiles, hasTiles: tiles.length>0,
+      date, hasDate: !!date,
+      datePicker, hasDatePicker: !!datePicker,
+      dateModes, hasModes: dateModes.length>0,
+      filters, hasFilters: filters.length>0,
+      search, hasSearch: !!search,
+      sort, hasSort: !!sort,
+      hasSlot5: !!(search || sort),
+    };
+  }
+}
+</script>
+</body>
+</html>
